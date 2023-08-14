@@ -16,6 +16,7 @@ class Application final : public testserver::Api::Service {
 
   grpc::Status DoThing(grpc::ServerContext* context, const testserver::DoThingRequest* request,
                           testserver::DoThingResponse* response) override;
+  void Wait() {server_->Wait();}
 private:
   std::unique_ptr<grpc::Server> server_;
 };
@@ -23,7 +24,9 @@ private:
 grpc::Status Application::DoThing(grpc::ServerContext* context, const testserver::DoThingRequest* request,
                           testserver::DoThingResponse* response)
 {
-  return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Functionality is unimplemented");;
+  std::cout << request->message() << std::endl;
+  response->set_message(request->message());
+  return grpc::Status();
 }
 
 Application::~Application() { server_->Shutdown(); }
@@ -47,5 +50,6 @@ Application::Application() {
 int main(void)
 {
   std::cout << "hello world!" << std::endl;
+  Application().Wait();
   return 0;
 }

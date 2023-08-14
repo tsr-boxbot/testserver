@@ -20,10 +20,15 @@ class Client {
   void DoThingRequest(void)
   {
     testserver::DoThingRequest request;
+    request.set_message("foobar");
     testserver::DoThingResponse response;
     ClientContext context;
     Status status = stub_->DoThing(&context, request, &response);
 
+    if (!status.ok()) {
+      std::cout << status.error_message() << std::endl;
+      return;
+    }
     std::cout << response.message() << std::endl;
   }
 
