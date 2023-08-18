@@ -11,7 +11,21 @@ cc_binary(
         "main.cc",
     ],
     deps = [
-        "//proto:testserver_cpp_grpc_lib",
+        "//:redis_database",
+        "//protos:testserver_cpp_grpc_lib",
+        "//:database",
+    ],
+)
+
+cc_binary(
+    name = "testserver2",
+    srcs = [
+        "main.cc",
+    ],
+    deps = [
+        "//:inmemory_database",
+        "//protos:testserver_cpp_grpc_lib",
+        "//:database",
     ],
 )
 
@@ -20,9 +34,45 @@ cc_binary(
     srcs = ["client.cc"],
     linkopts = ["-ldl"],
     deps = [
-        "//proto:testserver_cpp_grpc_lib",
+        "//protos:testserver_cpp_grpc_lib",
         "@com_github_grpc_grpc//:grpc++",
         "@com_github_grpc_grpc//:grpc++_reflection",
+    ],
+)
+
+cc_library(
+    name = "database",
+    srcs = glob([
+        "database.h",
+    ]),
+    hdrs = glob([
+        "database.h",
+    ]),
+    deps = [
+        "//protos:testserver_cpp_grpc_lib",
+    ],
+)
+
+cc_library(
+    name = "redis_database",
+    srcs = glob([
+        "redis.cc",
+    ]),
+    deps = [
+        "@redis",
+        "//:database",
+        "//protos:testserver_cpp_grpc_lib",
+    ],
+)
+
+cc_library(
+    name = "inmemory_database",
+    srcs = glob([
+        "inmemory.cc",
+    ]),
+    deps = [
+        "//:database",
+        "//protos:testserver_cpp_grpc_lib",
     ],
 )
 

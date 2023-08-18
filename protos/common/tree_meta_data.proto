@@ -1,0 +1,22 @@
+
+syntax = "proto3";
+
+message TreeMetaData {
+ int32 num = 1;
+ string name = 2;
+}
+
+message SetTreeMetaDataRequest {
+  TreeMetaData data = 1;
+};
+
+message SetTreeMetaDataResponse {
+};
+
+message GetTreeMetaDataRequest {
+  int32 tree_num = 1;
+};
+
+message GetTreeMetaDataResponse {
+  TreeMetaData data = 1;
+};

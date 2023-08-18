@@ -3,35 +3,40 @@
 #include <mutex>
 #include <thread>
 
+#include "database.h"
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
 
-#include "proto/testserver.grpc.pb.h"
+using API = StorageState::StorageStateAPI;
 
-class Application final : public testserver::Api::Service {
+class Application final : public API::Service {
  public:
   Application();
   ~Application();
 
-  grpc::Status DoThing(grpc::ServerContext* context, const testserver::DoThingRequest* request,
-                          testserver::DoThingResponse* response) override;
-  void Wait() {server_->Wait();}
-private:
-  std::unique_ptr<grpc::Server> server_;
-};
+  virtual grpc::Status SetTreeMetaData(grpc::ServerContext* context,
+                                       const SetTreeMetaDataRequest* request,
+                                       SetTreeMetaDataResponse* response) final
+  {
+    return database_->SetTreeMetaData(context, request, response);
+  }
+  virtual grpc::Status GetTreeMetaData(grpc::ServerContext* context,
+                                       const GetTreeMetaDataRequest* request,
+                                       GetTreeMetaDataResponse* response) final
+  {
+    return database_->GetTreeMetaData(context, request, response);
+  }
+  void Wait() { server_->Wait(); }
 
-grpc::Status Application::DoThing(grpc::ServerContext* context, const testserver::DoThingRequest* request,
-                          testserver::DoThingResponse* response)
-{
-  std::cout << request->message() << std::endl;
-  response->set_message(request->message());
-  return grpc::Status();
-}
+ private:
+  std::unique_ptr<grpc::Server> server_;
+  std::unique_ptr<Database> database_;
+};
 
 Application::~Application() { server_->Shutdown(); }
 
-Application::Application() {
+Application::Application() : database_(CreateDatabase()) {
   std::string server_address("0.0.0.0:50051");
 
   grpc::EnableDefaultHealthCheckService(true);
@@ -47,8 +52,7 @@ Application::Application() {
   server_ = std::move(local_server);
 }
 
-int main(void)
-{
+int main(void) {
   std::cout << "hello world!" << std::endl;
   Application().Wait();
   return 0;

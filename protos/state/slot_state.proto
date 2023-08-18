@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "protos/common/slot_address.proto";
+import "protos/common/package_meta_data.proto";
+
+message SlotState {
+ bool is_blocked = 1;
+ bool has_package = 2;
+ bool has_tray = 3;
+ PackageMetaData package_data = 4; // only meaningful if 2 is set
+};
+
+message GetSlotStateRequest {
+ ForestSlotAddress address = 1;
+};
+
+message GetSlotStateResponse {
+ ForestSlotAddress address = 1;
+ SlotState state = 2;
+};
+
+message SetSlotStateRequest {
+ ForestSlotAddress address = 1;
+ SlotState state = 2;
+};
+
+message SetSlotStateResponse {
+};

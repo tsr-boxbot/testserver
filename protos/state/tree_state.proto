@@ -1,0 +1,32 @@
+
+syntax = "proto3";
+
+import "protos/common/slot_address.proto";
+import "protos/common/tree_meta_data.proto";
+import "protos/state/slot_state.proto";
+
+message TreeStateEntry {
+  SlotAddress address = 1;
+  SlotState slot = 2;
+}
+
+message TreeState {
+  repeated TreeStateEntry states = 1;
+}
+
+message GetTreeStateRequest {
+  int32 tree_num = 1;
+};
+
+message GetTreeStateResponse {
+  TreeMetaData tree = 1;
+  TreeState state = 2;
+};
+
+message SetTreeStateRequest {
+  int32 tree_num = 1;
+  TreeState state = 2;
+};
+
+message SetTreeStateResponse {
+};

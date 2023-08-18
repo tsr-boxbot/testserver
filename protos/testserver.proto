@@ -1,0 +1,19 @@
+// Copyright (c) 2023 Box Bot Inc.
+// All rights reserved.
+
+syntax = "proto3";
+
+import "protos/state/tree_state.proto";
+import "protos/state/slot_state.proto";
+import "protos/common/tree_meta_data.proto";
+
+package StorageState;
+
+service StorageStateAPI {
+  rpc GetSlotState (GetSlotStateRequest) returns (GetSlotStateResponse) {}
+  rpc SetSlotState (SetSlotStateRequest) returns (SetSlotStateResponse) {}
+  rpc GetTreeState (GetTreeStateRequest) returns (GetTreeStateResponse) {}
+  rpc SetTreeState (SetTreeStateRequest) returns (GetTreeStateResponse) {}
+  rpc SetTreeMetaData (SetTreeMetaDataRequest) returns (SetTreeMetaDataResponse) {}
+  rpc GetTreeMetaData (GetTreeMetaDataRequest) returns (GetTreeMetaDataResponse) {}
+};

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message SlotAddress {
+  int32 side = 1;
+  int32 compartment = 2;
+  int32 column = 3;
+  int32 row = 4;  
+};
+
+message ForestSlotAddress {
+  int32 tree = 1;
+  SlotAddress slot_address = 2;
+};
