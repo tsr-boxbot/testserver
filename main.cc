@@ -7,6 +7,8 @@
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
+#include "paho-mqtt-cpp/include/mqtt/client.h"
+#include "announcer.h"
 
 using API = StorageState::StorageStateAPI;
 
@@ -19,7 +21,9 @@ class Application final : public API::Service {
                                        const SetTreeMetaDataRequest* request,
                                        SetTreeMetaDataResponse* response) final
   {
-    return database_->SetTreeMetaData(context, request, response);
+    if(const grpc::Status status = database_->SetTreeMetaData(context, request, response); !status.ok())
+      return status;
+    return announcer_->GetTreeMetaData(context, request, response);
   }
   virtual grpc::Status GetTreeMetaData(grpc::ServerContext* context,
                                        const GetTreeMetaDataRequest* request,
@@ -32,12 +36,13 @@ class Application final : public API::Service {
  private:
   std::unique_ptr<grpc::Server> server_;
   std::unique_ptr<Database> database_;
+  std::unique_ptr<Announcer> announcer_;
 };
 
 Application::~Application() { server_->Shutdown(); }
 
-Application::Application() : database_(CreateDatabase()) {
-  std::string server_address("0.0.0.0:50051");
+Application::Application() : database_(CreateDatabase()), announcer_(CreateAnnouncer()) {
+  std::string server_address("0.0.0.0:50081");
 
   grpc::EnableDefaultHealthCheckService(true);
   grpc::reflection::InitProtoReflectionServerBuilderPlugin();

@@ -1,4 +1,4 @@
-workspace(name = "Mycelium")
+workspace(name = "testserver")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -93,6 +93,9 @@ http_archive(
     build_file_content = all_content,
     sha256 = "386c9b5fa1cf6d0d516db12d57fd8f6a410dd0fdc5e9a2da870aae437a2535ed",
     strip_prefix = "paho.mqtt.c-1.3.9",
+    patch_args = ["-p1"],
+    patch_tool = "patch",
+    patches = ["@//third_party:paho.mqtt.c.patch"],
     urls = ["https://github.com/eclipse/paho.mqtt.c/archive/refs/tags/v1.3.9.tar.gz"],
 )
 
